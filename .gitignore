@@ -1,0 +1,6 @@
+# 仮想環境directory
+venv/
+
+# Specific files
+launch.bat
+memo.txt
