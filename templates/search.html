@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Form</title>
+    <style>
+        input[type="text"] {
+            width: 30%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .result-item {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery CDN -->
+</head>
+<body>
+    <h1>Hello, Flask!</h1>
+    <h3>野球選手検索アプリ</h3>
+    <form id="search-form">
+        <input type="text" name="query" id="query" placeholder="選手名、チーム名、ポジションのいずれかを入力">
+        <button type="submit">検索</button>
+    </form>
+    <div id="results">
+        <!-- 検索結果をここに表示 -->
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#search-form').on('submit', function (event) {
+                event.preventDefault(); // フォーム送信をキャンセル
+                const query = $('#query').val(); // 入力値を取得
+
+                // 検索リクエストを送信
+                $.ajax({
+                    url: '/search',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ query: query }),
+                    success: function (response) {
+                        // 成功時の処理: 結果を表示
+                        let resultsDiv = $('#results');
+                        resultsDiv.empty(); // 古い結果を削除
+                        if (response.results.length > 0) {
+                            response.results.forEach(result => {
+                                resultsDiv.append(`
+                                    <div class="result-item">
+                                        <strong>${result.source.name}</strong> - ${result.source.team} (${result.source.position})
+                                        <br>
+                                        打率: ${result.source.batting_average}, 本塁打: ${result.source.home_runs}, 得点: ${result.source.runs}
+                                    </div>
+                                `);
+                            });
+                        } else {
+                            resultsDiv.append('<p>該当する結果がありません。</p>');
+                        }
+                    },
+                    error: function (error) {
+                        // エラー時の処理
+                        console.error('検索エラー:', error);
+                        $('#results').html('<p>検索中にエラーが発生しました。</p>');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

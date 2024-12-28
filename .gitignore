@@ -1,6 +1,8 @@
-# 仮想環境directory
+# directory
 venv/
+elasticsearch-8.17.0/
 
 # Specific files
 launch.bat
 memo.txt
+.env
